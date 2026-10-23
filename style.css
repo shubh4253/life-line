@@ -1,0 +1,27 @@
+/* Custom glow effects and scrollbar hiding */
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+#map {
+    border: 1px solid #1f2937;
+    z-index: 1;
+}
+
+/* Make Leaflet Map Dark Mode friendly */
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+/* Subtle pulse animation for the analyze button */
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(220,38,38,0.4); }
+    50% { box-shadow: 0 0 25px rgba(220,38,38,0.8); }
+}
+
+#analyzeBtn:hover {
+    animation: pulse-glow 2s infinite;
+}

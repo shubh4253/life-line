@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life-Line | Organ Logistics</title>
+    <!-- Tailwind CSS for rapid styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS for the Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-950 text-white min-h-screen font-sans p-6">
+
+    <header class="mb-8 border-b border-gray-800 pb-4">
+        <h1 class="text-3xl font-bold text-red-500 tracking-wider flex items-center">
+            <span class="mr-2">🚁</span> LIFE-LINE <span class="text-gray-500 text-sm ml-4 font-normal">Golden Hour Dispatch Orchestrator</span>
+        </h1>
+    </header>
+
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[80vh]">
+        
+        <!-- LEFT COLUMN: The Ingest Zone -->
+        <section class="bg-gray-900 border border-gray-800 rounded-xl p-6 flex flex-col shadow-2xl">
+            <h2 class="text-xl text-gray-400 mb-4 font-semibold uppercase tracking-wide">Messy Data Ingest</h2>
+            
+            <div class="border-2 border-dashed border-gray-700 rounded-lg p-10 text-center hover:border-red-500 transition-colors flex-grow flex flex-col justify-center items-center cursor-pointer bg-gray-950">
+                <p class="text-gray-500 mb-2">Drag & Drop Fax / Medical Form Here</p>
+                <input type="file" id="medicalFax" accept="image/jpeg,image/png,image/webp" class="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-900 file:text-red-300 hover:file:bg-red-800"/>
+                <p class="mt-3 max-w-md text-xs text-gray-500">The selected image will be sent to the Gemini API configured for this app. Do not upload a real patient's record unless your use of that service is authorized and complies with your privacy requirements.</p>
+            </div>
+
+            <div class="mt-6">
+                <label class="text-xs text-gray-500 uppercase tracking-widest" for="getLocationBtn">Route origin</label>
+                <button id="getLocationBtn" type="button" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded p-3 text-white mt-1">
+                    Use my current location
+                </button>
+                <p id="locationStatus" class="mt-2 text-xs text-gray-500" role="status" aria-live="polite">Allow location access to route to the demo hospital match.</p>
+                <p class="mt-1 text-xs text-gray-500">Your location is sent to the public OSRM routing service to calculate the route. Do not use this demo for emergency dispatch.</p>
+            </div>
+
+            <button id="analyzeBtn" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 px-6 rounded-lg mt-8 shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all uppercase tracking-wider">
+                Analyze & Route
+            </button>
+        </section>
+
+        <!-- RIGHT COLUMN: The Action Zone -->
+        <section class="flex flex-col gap-6">
+            
+            <!-- Top Row: Data Cards -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg">
+                    <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-1">Donor Vitals</h3>
+                    <p id="donorOutput" class="text-xl font-bold text-gray-300">Awaiting Data...</p>
+                </div>
+                <div class="bg-gray-900 border border-green-900/50 rounded-xl p-5 shadow-lg relative overflow-hidden">
+                    <h3 class="text-xs text-green-500 uppercase tracking-widest mb-1">Golden Hour Timer</h3>
+                    <p id="countdown" class="text-3xl font-mono font-bold text-green-400">04:00:00</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-blue-900/50 rounded-xl p-5 shadow-lg">
+                <h3 class="text-xs text-blue-500 uppercase tracking-widest mb-1">Demo Recipient Match (Mock Registry)</h3>
+                <p id="matchOutput" class="text-lg text-gray-300">Standing by for blood type match...</p>
+            </div>
+
+            <section class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg" aria-labelledby="analysisHeading">
+                <h3 id="analysisHeading" class="text-xs text-purple-400 uppercase tracking-widest mb-2">Document Analysis</h3>
+                <p id="analysisStatus" class="text-sm text-gray-400" role="status" aria-live="polite">Upload an image and select Analyze &amp; Route.</p>
+                <div id="analysisResult" class="hidden mt-4 space-y-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-200 mb-1">Clear rewritten explanation</h4>
+                        <p id="analysisExplanation" class="text-sm text-gray-300 whitespace-pre-wrap"></p>
+                    </div>
+                    <details>
+                        <summary class="cursor-pointer text-sm font-semibold text-gray-200">View full deciphered text</summary>
+                        <pre id="transcriptionOutput" class="mt-2 max-h-64 overflow-y-auto whitespace-pre-wrap break-words rounded bg-gray-950 p-3 text-sm text-gray-300"></pre>
+                    </details>
+                    <p class="text-xs text-yellow-500">AI can misread medical documents. Verify every detail against the original with a qualified professional. This demo's recipient registry and route are mock data, not a real dispatch service.</p>
+                </div>
+            </section>
+
+            <!-- Bottom Row: The Map -->
+            <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 flex-grow shadow-lg flex flex-col">
+                <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-2">Road Route (Demo)</h3>
+                <p id="routeStatus" class="mb-3 text-sm text-gray-400" role="status" aria-live="polite">Analyze a document and set your current location to view a road route.</p>
+                <div id="map" class="w-full h-full rounded-lg min-h-[250px] bg-gray-800"></div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Leaflet JS FIRST -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- YOUR Custom Scripts LAST -->
+    <script src="logistics.js"></script>
+    <script src="gemini.js"></script>
+</body>
+</html>
