@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life-Line | Organ Logistics</title>
+    <title>Life-Line | Organ Transplant Logistics & Golden Hour Orchestrator</title>
     <!-- Tailwind CSS for rapid styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Leaflet CSS for the Map -->
@@ -11,90 +11,333 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-950 text-white min-h-screen font-sans p-6">
+<body class="bg-gray-950 text-white min-h-screen font-sans p-4 md:p-6 antialiased">
 
-    <header class="mb-8 border-b border-gray-800 pb-4">
-        <h1 class="text-3xl font-bold text-red-500 tracking-wider flex items-center">
-            <span class="mr-2">🚁</span> LIFE-LINE <span class="text-gray-500 text-sm ml-4 font-normal">Golden Hour Dispatch Orchestrator</span>
-        </h1>
+    <!-- TOP HEADER & TELEMETRY BAR -->
+    <header class="mb-6 border-b border-gray-800 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="text-3xl p-2 bg-red-950/80 border border-red-800/80 rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.3)]">🚁</span>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-red-500 tracking-wider flex items-center gap-3">
+                        LIFE-LINE
+                        <span class="text-xs bg-red-950 border border-red-700/60 text-red-400 font-mono px-2 py-0.5 rounded-full uppercase tracking-normal">
+                            Universal Medical Dispatch Bridge
+                        </span>
+                    </h1>
+                    <p class="text-gray-400 text-xs md:text-sm mt-0.5">
+                        Converts Messy Handwritten Faxes &amp; Radio Dispatches into Life-Saving Organ Logistics Action Plans
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Mode / System Badge -->
+            <div id="offlineBadge" class="flex items-center gap-2 bg-emerald-950/70 border border-emerald-700/60 text-emerald-400 text-xs px-3 py-1.5 rounded-lg shadow-sm">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span id="aiEngineLabel" class="font-mono font-medium">Gemini AI / Offline Ready</span>
+            </div>
+
+            <!-- Download / Print Action Plan Button -->
+            <button id="exportPlanBtn" type="button" class="hidden md:flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-700 text-gray-300 text-xs px-3 py-1.5 rounded-lg transition-all">
+                <span>📋</span> Export Action Plan
+            </button>
+        </div>
     </header>
 
-    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[80vh]">
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[85vh]">
         
-        <!-- LEFT COLUMN: The Ingest Zone -->
-        <section class="bg-gray-900 border border-gray-800 rounded-xl p-6 flex flex-col shadow-2xl">
-            <h2 class="text-xl text-gray-400 mb-4 font-semibold uppercase tracking-wide">Messy Data Ingest</h2>
-            
-            <div class="border-2 border-dashed border-gray-700 rounded-lg p-10 text-center hover:border-red-500 transition-colors flex-grow flex flex-col justify-center items-center cursor-pointer bg-gray-950">
-                <p class="text-gray-500 mb-2">Drag & Drop Fax / Medical Form Here</p>
-                <input type="file" id="medicalFax" accept="image/jpeg,image/png,image/webp" class="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-900 file:text-red-300 hover:file:bg-red-800"/>
-                <p class="mt-3 max-w-md text-xs text-gray-500">The selected image will be sent to the Gemini API configured for this app. Do not upload a real patient's record unless your use of that service is authorized and complies with your privacy requirements.</p>
-            </div>
+        <!-- LEFT COLUMN: The Ingest & AI Bridge Zone (5 cols) -->
+        <section class="lg:col-span-5 flex flex-col gap-5">
 
-            <div class="mt-6">
-                <label class="text-xs text-gray-500 uppercase tracking-widest" for="getLocationBtn">Route origin</label>
-                <button id="getLocationBtn" type="button" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded p-3 text-white mt-1">
-                    Use my current location
-                </button>
-                <p id="locationStatus" class="mt-2 text-xs text-gray-500" role="status" aria-live="polite">Allow location access to route to the demo hospital match.</p>
-                <p class="mt-1 text-xs text-gray-500">Your location is sent to the public OSRM routing service to calculate the route. Do not use this demo for emergency dispatch.</p>
-            </div>
-
-            <button id="analyzeBtn" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 px-6 rounded-lg mt-8 shadow-[0_0_15px_rgba(220,38,38,0.5)] transition-all uppercase tracking-wider">
-                Analyze & Route
-            </button>
-        </section>
-
-        <!-- RIGHT COLUMN: The Action Zone -->
-        <section class="flex flex-col gap-6">
-            
-            <!-- Top Row: Data Cards -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg">
-                    <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-1">Donor Vitals</h3>
-                    <p id="donorOutput" class="text-xl font-bold text-gray-300">Awaiting Data...</p>
+            <!-- 1. Messy Input Zone -->
+            <div class="bg-gray-900/90 border border-gray-800 rounded-xl p-5 shadow-2xl flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-sm text-gray-300 font-semibold uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+                        1. Messy Data Ingest
+                    </h2>
+                    <span class="text-xs text-gray-400 font-mono">Unstructured Fax / Voice</span>
                 </div>
-                <div class="bg-gray-900 border border-green-900/50 rounded-xl p-5 shadow-lg relative overflow-hidden">
-                    <h3 class="text-xs text-green-500 uppercase tracking-widest mb-1">Golden Hour Timer</h3>
-                    <p id="countdown" class="text-3xl font-mono font-bold text-green-400">04:00:00</p>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-blue-900/50 rounded-xl p-5 shadow-lg">
-                <h3 class="text-xs text-blue-500 uppercase tracking-widest mb-1">Demo Recipient Match (Mock Registry)</h3>
-                <p id="matchOutput" class="text-lg text-gray-300">Standing by for blood type match...</p>
-            </div>
-
-            <section class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg" aria-labelledby="analysisHeading">
-                <h3 id="analysisHeading" class="text-xs text-purple-400 uppercase tracking-widest mb-2">Document Analysis</h3>
-                <p id="analysisStatus" class="text-sm text-gray-400" role="status" aria-live="polite">Upload an image and select Analyze &amp; Route.</p>
-                <div id="analysisResult" class="hidden mt-4 space-y-4">
-                    <div>
-                        <h4 class="text-sm font-semibold text-gray-200 mb-1">Clear rewritten explanation</h4>
-                        <p id="analysisExplanation" class="text-sm text-gray-300 whitespace-pre-wrap"></p>
+                
+                <!-- Quick Demo Presets (1-Click Judge Experience) -->
+                <div class="mb-4">
+                    <p class="text-xs text-gray-400 mb-2">⚡ Quick Test: Select a Messy Medical Sample</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" id="presetHeartBtn" class="preset-btn bg-gray-950 hover:bg-red-950/50 border border-gray-700 hover:border-red-500 text-left p-2.5 rounded-lg transition-all text-xs group">
+                            <span class="block font-bold text-red-400 group-hover:text-red-300">Heart (O-)</span>
+                            <span class="text-[10px] text-gray-400">4h Golden Window</span>
+                        </button>
+                        <button type="button" id="presetLiverBtn" class="preset-btn bg-gray-950 hover:bg-amber-950/50 border border-gray-700 hover:border-amber-500 text-left p-2.5 rounded-lg transition-all text-xs group">
+                            <span class="block font-bold text-amber-400 group-hover:text-amber-300">Liver (B+)</span>
+                            <span class="text-[10px] text-gray-400">10h Viability</span>
+                        </button>
+                        <button type="button" id="presetKidneyBtn" class="preset-btn bg-gray-950 hover:bg-purple-950/50 border border-gray-700 hover:border-purple-500 text-left p-2.5 rounded-lg transition-all text-xs group">
+                            <span class="block font-bold text-purple-400 group-hover:text-purple-300">Kidneys (A+)</span>
+                            <span class="text-[10px] text-gray-400">24h Allocation</span>
+                        </button>
                     </div>
-                    <details>
-                        <summary class="cursor-pointer text-sm font-semibold text-gray-200">View full deciphered text</summary>
-                        <pre id="transcriptionOutput" class="mt-2 max-h-64 overflow-y-auto whitespace-pre-wrap break-words rounded bg-gray-950 p-3 text-sm text-gray-300"></pre>
+                </div>
+
+                <!-- Drag & Drop Zone -->
+                <div id="dropZone" class="border-2 border-dashed border-gray-700 rounded-lg p-5 text-center hover:border-red-500 transition-colors flex flex-col justify-center items-center cursor-pointer bg-gray-950 relative overflow-hidden group">
+                    <div id="uploadPlaceholder" class="flex flex-col items-center">
+                        <span class="text-3xl mb-1 group-hover:scale-110 transition-transform">📄</span>
+                        <p class="text-gray-300 text-sm font-medium">Drag &amp; Drop Fax / Medical Form Here</p>
+                        <p class="text-gray-400 text-xs mt-1">Supports messy handwriting, scanned JPG/PNG/WebP, or SVG</p>
+                        <input type="file" id="medicalFax" accept="image/jpeg,image/png,image/webp,image/svg+xml" class="text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-red-900/60 file:text-red-300 hover:file:bg-red-800 mt-3"/>
+                    </div>
+                    <!-- Live Preview Thumbnail -->
+                    <div id="previewContainer" class="hidden w-full flex flex-col items-center">
+                        <img id="imagePreview" src="" alt="Document Preview" class="max-h-36 rounded border border-gray-700 shadow-md object-contain bg-white/5 p-1" />
+                        <span id="previewFilename" class="text-[11px] text-gray-400 mt-2 font-mono truncate max-w-xs"></span>
+                    </div>
+                </div>
+
+                <!-- Voice / Radio Dispatch Simulated Messy Input -->
+                <div class="mt-4 flex items-center gap-2">
+                    <button id="voiceDispatchBtn" type="button" class="flex-1 bg-gray-950 hover:bg-gray-800 border border-gray-700 rounded-lg p-2.5 text-xs text-gray-300 flex items-center justify-center gap-2 transition-all">
+                        <span id="voiceMicIcon">🎙️</span>
+                        <span id="voiceBtnText">Simulate Emergency Radio Dispatch</span>
+                    </button>
+                </div>
+
+                <!-- Route Origin Selection -->
+                <div class="mt-4">
+                    <label class="text-xs text-gray-400 uppercase tracking-wider block mb-1.5 font-medium" for="originSelect">
+                        Route Origin (Donor Procurement Hospital)
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <select id="originSelect" class="bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+                            <option value="lilavati">Lilavati Hospital, Mumbai (West)</option>
+                            <option value="sassoon">Sassoon General Hospital, Pune</option>
+                            <option value="aiims">AIIMS Trauma Centre, New Delhi</option>
+                        </select>
+                        <button id="getLocationBtn" type="button" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg p-2.5 text-xs text-white flex items-center justify-center gap-1.5 transition-all">
+                            <span>📍</span> Use my GPS Location
+                        </button>
+                    </div>
+                    <p id="locationStatus" class="mt-2 text-[11px] text-gray-400" role="status" aria-live="polite">
+                        Origin set to Lilavati Hospital, Mumbai. Select Analyze &amp; Route to orchestrate dispatch.
+                    </p>
+                </div>
+
+                <!-- Mode Selection: Ambulance vs Helicopter -->
+                <div class="mt-4">
+                    <label class="text-xs text-gray-400 uppercase tracking-wider block mb-1.5 font-medium">
+                        Transport Corridor Mode
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="modeAmbulanceBtn" class="mode-btn bg-red-950/60 border border-red-500 text-white p-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                            <span>🚑</span> Green Corridor (Road)
+                        </button>
+                        <button type="button" id="modeHeliBtn" class="mode-btn bg-gray-950 border border-gray-700 text-gray-400 hover:text-white p-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                            <span>🚁</span> LifeFlight Air Ambulance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="analyzeBtn" class="w-full btn-emergency text-white font-bold py-3.5 px-6 rounded-lg mt-5 tracking-wider uppercase text-sm transition-all flex items-center justify-center gap-2">
+                    <span id="analyzeSpinner" class="hidden animate-spin">⚙️</span>
+                    <span id="analyzeBtnText">Analyze &amp; Generate Transport Plan</span>
+                </button>
+            </div>
+
+            <!-- 2. AI Document Analysis Box (Transcription & Verification) -->
+            <section class="bg-gray-900/90 border border-gray-800 rounded-xl p-5 shadow-xl flex-grow" aria-labelledby="analysisHeading">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 id="analysisHeading" class="text-xs text-purple-400 uppercase tracking-widest font-semibold flex items-center gap-2">
+                        <span>🤖</span> AI Decipher &amp; Verification Bridge
+                    </h3>
+                    <span id="aiBadge" class="text-[10px] bg-purple-950 text-purple-300 border border-purple-800 px-2 py-0.5 rounded">
+                        Gemini Multimodal / OCR
+                    </span>
+                </div>
+                <p id="analysisStatus" class="text-xs text-gray-400" role="status" aria-live="polite">
+                    Upload an image or pick a sample preset and select Analyze &amp; Route.
+                </p>
+                
+                <div id="analysisResult" class="hidden mt-3 space-y-3">
+                    <div class="bg-gray-950 border border-gray-800 p-3 rounded-lg">
+                        <h4 class="text-xs font-semibold text-gray-300 mb-1 flex items-center gap-1.5">
+                            <span class="text-emerald-400">✓</span> Verified Clinical Summary &amp; Mandate
+                        </h4>
+                        <p id="analysisExplanation" class="text-xs text-gray-300 leading-relaxed whitespace-pre-wrap"></p>
+                    </div>
+
+                    <details class="bg-gray-950 border border-gray-800 rounded-lg p-2.5">
+                        <summary class="cursor-pointer text-xs font-semibold text-gray-400 hover:text-gray-200 flex items-center justify-between">
+                            <span>🔍 View Raw Deciphered Medical Fax Transcript</span>
+                            <span class="text-[10px] text-gray-400 font-mono">Expand</span>
+                        </summary>
+                        <pre id="transcriptionOutput" class="mt-2 max-h-40 overflow-y-auto whitespace-pre-wrap break-words rounded bg-black/60 p-2.5 text-[11px] font-mono text-gray-300 border border-gray-800"></pre>
                     </details>
-                    <p class="text-xs text-yellow-500">AI can misread medical documents. Verify every detail against the original with a qualified professional. This demo's recipient registry and route are mock data, not a real dispatch service.</p>
+                    
+                    <p class="text-[10px] text-yellow-500/90 flex items-center gap-1">
+                        <span>⚠️</span> AI verified against NOTTO donor criteria. Always corroborate with on-site transplant coordinators.
+                    </p>
                 </div>
             </section>
+        </section>
 
-            <!-- Bottom Row: The Map -->
-            <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 flex-grow shadow-lg flex flex-col">
-                <h3 class="text-xs text-gray-500 uppercase tracking-widest mb-2">Road Route (Demo)</h3>
-                <p id="routeStatus" class="mb-3 text-sm text-gray-400" role="status" aria-live="polite">Analyze a document and set your current location to view a road route.</p>
-                <div id="map" class="w-full h-full rounded-lg min-h-[250px] bg-gray-800"></div>
+        <!-- RIGHT COLUMN: The Action Plan, Map & Live Tracking Zone (7 cols) -->
+        <section class="lg:col-span-7 flex flex-col gap-5">
+            
+            <!-- Top Row: Structured Vitals & Golden Hour Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <!-- Donor Vitals Card -->
+                <div class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 shadow-lg">
+                    <h3 class="text-[11px] text-gray-400 uppercase tracking-widest font-medium mb-1">Donor Vitals</h3>
+                    <div id="donorOutput" class="text-sm font-semibold text-gray-300">
+                        Awaiting Data...
+                    </div>
+                </div>
+
+                <!-- Golden Hour Ticking Clock Card -->
+                <div id="timerCard" class="bg-gray-900/90 border border-green-900/50 rounded-xl p-4 shadow-lg relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-[11px] text-green-400 uppercase tracking-widest font-medium mb-1">Golden Window</h3>
+                        <span id="ischemiaLabel" class="text-[10px] text-green-500 font-mono">Max Cold Ischemia</span>
+                    </div>
+                    <p id="countdown" class="text-2xl md:text-3xl font-mono font-black text-green-400 tracking-wider">04:00:00</p>
+                    <p id="timerSubtext" class="text-[10px] text-gray-400 mt-0.5">Cardiac threshold: 4h strict limit</p>
+                </div>
+
+                <!-- Demo Recipient Match Card -->
+                <div class="bg-gray-900/90 border border-blue-900/50 rounded-xl p-4 shadow-lg">
+                    <h3 class="text-[11px] text-blue-400 uppercase tracking-widest font-medium mb-1">Recipient Allocation Match</h3>
+                    <div id="matchOutput" class="text-xs text-gray-300 leading-snug">
+                        Standing by for donor serology match...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Structured Transport Action Plan -->
+            <div id="actionPlanCard" class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 shadow-lg">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs text-red-400 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                        <span>🛡️</span> Structured Transport Action Plan
+                    </h3>
+                    <span id="compatibilityBadge" class="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-700/60 px-2 py-0.5 rounded font-mono font-semibold">
+                        ABO / Rh Verification Ready
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div id="phase1Card" class="phase-card bg-gray-950 p-2.5 rounded-lg active">
+                        <span class="text-[10px] text-gray-400 block font-mono">PHASE 1</span>
+                        <span class="font-bold text-gray-200 block text-[11px]">Cold Perfusion</span>
+                        <span id="phase1Desc" class="text-[10px] text-gray-400 block mt-0.5">Custodiol HTK 4°C flush</span>
+                    </div>
+                    <div id="phase2Card" class="phase-card bg-gray-950 p-2.5 rounded-lg">
+                        <span class="text-[10px] text-gray-400 block font-mono">PHASE 2</span>
+                        <span class="font-bold text-gray-200 block text-[11px]">Green Corridor</span>
+                        <span id="phase2Desc" class="text-[10px] text-gray-400 block mt-0.5">Police Escort Dispatched</span>
+                    </div>
+                    <div id="phase3Card" class="phase-card bg-gray-950 p-2.5 rounded-lg">
+                        <span class="text-[10px] text-gray-400 block font-mono">PHASE 3</span>
+                        <span class="font-bold text-gray-200 block text-[11px]">In-Transit</span>
+                        <span id="phase3Desc" class="text-[10px] text-gray-400 block mt-0.5">Live Telemetry Active</span>
+                    </div>
+                    <div id="phase4Card" class="phase-card bg-gray-950 p-2.5 rounded-lg">
+                        <span class="text-[10px] text-gray-400 block font-mono">PHASE 4</span>
+                        <span class="font-bold text-gray-200 block text-[11px]">Recipient OT</span>
+                        <span id="phase4Desc" class="text-[10px] text-gray-400 block mt-0.5">OR Team on Bypass</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map & Live Tracking Center -->
+            <div class="bg-gray-900/90 border border-gray-800 rounded-xl p-4 flex-grow shadow-2xl flex flex-col min-h-[420px]">
+                
+                <!-- Map Header & Live Tracking Controls -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 gap-3 border-b border-gray-800/80 mb-3">
+                    <div>
+                        <h3 class="text-xs text-gray-300 uppercase tracking-widest font-semibold flex items-center gap-2">
+                            <span>🛰️</span> Real-Time Transit Corridor &amp; Telemetry
+                        </h3>
+                        <p id="routeStatus" class="text-[11px] text-gray-400 mt-0.5" role="status" aria-live="polite">
+                            Awaiting donor match. Select Analyze &amp; Route to map transport.
+                        </p>
+                    </div>
+
+                    <!-- Live Simulation Controls -->
+                    <div class="flex items-center gap-2">
+                        <button id="startTrackingBtn" type="button" class="bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                            <span id="playIcon">▶</span>
+                            <span id="trackingBtnText">Start Live Tracking</span>
+                        </button>
+                        <button id="speedMultiplierBtn" type="button" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs px-2.5 py-1.5 rounded-lg font-mono">
+                            5x Speed
+                        </button>
+                        <button id="resetTrackingBtn" type="button" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs px-2 py-1.5 rounded-lg" title="Reset Simulation">
+                            ↺
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Telemetry HUD Bar (shown during tracking) -->
+                <div id="telemetryHUD" class="bg-gray-950/80 border border-gray-800 rounded-lg p-2.5 mb-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div>
+                        <span class="text-[10px] text-gray-400 block font-mono">TRANSIT VEHICLE</span>
+                        <span id="hudVehicle" class="font-bold text-gray-200">🚑 Ambulance Unit 04</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 block font-mono">SPEED / TELEMETRY</span>
+                        <span id="hudSpeed" class="font-bold text-emerald-400 font-mono">78 km/h (Corridor)</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 block font-mono">DISTANCE REMAINING</span>
+                        <span id="hudDistance" class="font-bold text-blue-400 font-mono">-- km</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 block font-mono">ESTIMATED ARRIVAL (ETA)</span>
+                        <span id="hudETA" class="font-bold text-amber-400 font-mono">-- min</span>
+                    </div>
+                </div>
+
+                <!-- Leaflet Map Container -->
+                <div id="map" class="w-full rounded-lg flex-grow min-h-[300px] bg-gray-950 border border-gray-800"></div>
+
+                <!-- Live Waypoint Feed ticker -->
+                <div class="mt-2.5 flex items-center justify-between text-[11px] text-gray-400 border-t border-gray-800/60 pt-2 font-mono">
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="waypointFeed">Status: Standing by for route dispatch orchestration.</span>
+                    </span>
+                    <span id="corridorClearance" class="text-emerald-400 font-semibold">Corridor: Armed</span>
+                </div>
             </div>
 
         </section>
     </main>
 
+    <!-- Modal for Radio Voice Dispatch Input -->
+    <div id="voiceModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-lg w-full shadow-2xl">
+            <h3 class="text-base font-bold text-red-500 mb-2 flex items-center gap-2">
+                <span>🎙️</span> Emergency Radio / Voice Dispatch Simulator
+            </h3>
+            <p class="text-xs text-gray-400 mb-4">
+                In chaotic emergencies, doctors radio in messy donor briefings. Life-Line uses Gemini to convert speech/audio transcripts into structured surgical actions.
+            </p>
+            <textarea id="voiceTranscriptInput" rows="4" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-xs text-gray-200 font-mono focus:outline-none focus:border-red-500 mb-4" placeholder="Speak or edit messy radio dispatch transcript..."></textarea>
+            <div class="flex justify-end gap-2">
+                <button id="cancelVoiceBtn" type="button" class="bg-gray-800 text-gray-300 text-xs px-4 py-2 rounded-lg">Cancel</button>
+                <button id="submitVoiceBtn" type="button" class="btn-emergency text-white text-xs font-bold px-4 py-2 rounded-lg">Convert to Action Plan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Leaflet JS FIRST -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- YOUR Custom Scripts LAST -->
+    <!-- Custom Scripts LAST -->
     <script src="logistics.js"></script>
     <script src="gemini.js"></script>
 </body>

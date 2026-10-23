@@ -1,27 +1,138 @@
-/* Custom glow effects and scrollbar hiding */
+/* style.css - Life-Line Organ Logistics Styling */
+
+:root {
+  --primary-glow: rgba(239, 68, 68, 0.4);
+  --accent-blue: #3b82f6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+}
+
 body {
-    -webkit-font-smoothing: antialiased;
+  background: radial-gradient(circle at 50% 0%, #111827 0%, #030712 100%);
+  color: #f3f4f6;
 }
 
-#map {
-    border: 1px solid #1f2937;
-    z-index: 1;
+/* Glassmorphic Panels */
+.glass-panel {
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Make Leaflet Map Dark Mode friendly */
-.leaflet-layer,
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out,
-.leaflet-control-attribution {
-    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
 }
 
-/* Subtle pulse animation for the analyze button */
-@keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 15px rgba(220,38,38,0.4); }
-    50% { box-shadow: 0 0 25px rgba(220,38,38,0.8); }
+/* Radar & Pulsing Beacon Animations */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-#analyzeBtn:hover {
-    animation: pulse-glow 2s infinite;
+@keyframes emergency-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6), inset 0 0 10px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.9), inset 0 0 20px rgba(239, 68, 68, 0.6);
+  }
+}
+
+.radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+}
+
+.emergency-glow {
+  animation: emergency-pulse 2s ease-in-out infinite;
+}
+
+/* Vehicle Marker on Map */
+.vehicle-marker-icon {
+  background: transparent;
+  border: none;
+}
+
+.vehicle-pulse-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehicle-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #ef4444;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.vehicle-core {
+  width: 34px;
+  height: 34px;
+  background: #111827;
+  border: 2px solid #ef4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+  transition: transform 0.2s ease;
+}
+
+/* Pulse animation utility fallback */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Action Plan Phase Badges */
+.phase-card {
+  transition: all 0.2s ease;
+  border-left: 3px solid #374151;
+}
+
+.phase-card.active {
+  border-left-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.phase-card.complete {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.06);
+}
+
+/* Neon buttons */
+.btn-emergency {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.4);
+}
+
+.btn-emergency:hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.6);
+}
+
+/* Map offline fallback styling */
+.leaflet-container {
+  background-color: #111827 !important;
 }

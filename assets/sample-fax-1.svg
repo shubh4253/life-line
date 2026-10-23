@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100" style="background:#f4efe6; font-family:'Courier New', monospace; color:#1a1a1a;">
+  <defs>
+    <filter id="fax-noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.15 0" />
+      <feComposite in2="SourceGraphic" in="glitch" operator="in" />
+    </filter>
+  </defs>
+
+  <!-- Fax Header Line -->
+  <rect x="0" y="0" width="800" height="1100" fill="#f8f5ee" />
+  <line x1="40" y1="35" x2="760" y2="35" stroke="#444" stroke-width="1.5" stroke-dasharray="5,3" />
+  <text x="45" y="25" font-size="12" fill="#555">TX/RX NO. 9402 | 23-OCT 13:42 | LILAVATI ICU-TRAUMA FAX -> NOTTO COORD | P. 01/01</text>
+  
+  <!-- Hospital Header -->
+  <text x="400" y="80" font-size="20" font-weight="bold" text-anchor="middle" letter-spacing="2">LILAVATI HOSPITAL &amp; RESEARCH CENTRE</text>
+  <text x="400" y="102" font-size="12" text-anchor="middle" fill="#555">CRITICAL CARE &amp; TRANSPLANT SURGERY UNIT - MUMBAI</text>
+  <line x1="120" y1="115" x2="680" y2="115" stroke="#222" stroke-width="2" />
+  
+  <!-- Stamp: URGENT -->
+  <g transform="rotate(-12 620 160)">
+    <rect x="520" y="130" width="200" height="55" fill="none" stroke="#b91c1c" stroke-width="4" rx="6" />
+    <text x="620" y="167" font-size="24" font-weight="900" fill="#b91c1c" text-anchor="middle" letter-spacing="3">URGENT - STAT</text>
+    <text x="620" y="180" font-size="9" font-weight="bold" fill="#b91c1c" text-anchor="middle">GOLDEN HOUR DISPATCH</text>
+  </g>
+
+  <!-- Form Fields -->
+  <text x="50" y="170" font-size="15" font-weight="bold">FORM ID: NOTTO-CAD-2026-0881</text>
+  <text x="50" y="195" font-size="13">DATE: 23-OCT-2026 | TIME OF PRONOUNCEMENT: 13:15 HRS</text>
+  <text x="50" y="215" font-size="13">DECLARATION: BRAIN STEM DEATH (APNEA TEST POSITIVE x 2)</text>
+  
+  <rect x="45" y="235" width="710" height="2" fill="#444" />
+  
+  <!-- Section 1: Donor Profile -->
+  <rect x="45" y="245" width="710" height="28" fill="#e8e2d5" />
+  <text x="55" y="264" font-size="13" font-weight="bold">SECTION A: CADAVERIC DONOR PROFILE</text>
+  
+  <text x="55" y="300" font-size="13">Patient Age / Sex : <tspan font-weight="bold">29 YRS / MALE</tspan></text>
+  <text x="400" y="300" font-size="13">Cause of Death: <tspan font-weight="bold">Severe TBI (Motor Vehicle Collision)</tspan></text>
+  
+  <!-- Highlighted Blood Group -->
+  <rect x="50" y="325" width="340" height="50" fill="#fee2e2" stroke="#dc2626" stroke-width="2" rx="4" />
+  <text x="60" y="348" font-size="12" fill="#991b1b" font-weight="bold">VERIFIED ABO / Rh TYPING:</text>
+  <text x="60" y="368" font-size="20" fill="#b91c1c" font-weight="900">BLOOD GROUP: O NEGATIVE (O-)</text>
+  
+  <rect x="410" y="325" width="340" height="50" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" rx="4" />
+  <text x="420" y="348" font-size="12" fill="#0369a1" font-weight="bold">PRIMARY ORGAN OFFERED:</text>
+  <text x="420" y="368" font-size="20" fill="#0369a1" font-weight="900">ORGAN: HEART (CARDIAC ALLOGRAFT)</text>
+
+  <!-- Section 2: Clinical Parameters -->
+  <rect x="45" y="400" width="710" height="28" fill="#e8e2d5" />
+  <text x="55" y="419" font-size="13" font-weight="bold">SECTION B: DONOR HEMODYNAMICS &amp; SEROLOGY</text>
+
+  <text x="55" y="450" font-size="13">Blood Pressure (MAP): 78 mmHg (on Noradrenaline 0.08 mcg/kg/min)</text>
+  <text x="55" y="475" font-size="13">LVEF (Echocardiogram): 60% - Normal LV wall motion, no valvular lesion</text>
+  <text x="55" y="500" font-size="13">Infectious Markers: HIV I/II (-ve), HBsAg (-ve), Anti-HCV (-ve), VDRL (-ve)</text>
+  <text x="55" y="525" font-size="13">Current Location: ICU Bay 03, Lilavati Hospital, Bandra West, Mumbai</text>
+
+  <!-- Urgent Logistics Warning -->
+  <rect x="45" y="555" width="710" height="110" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4" />
+  <text x="60" y="580" font-size="14" font-weight="bold" fill="#92400e">CRITICAL ISCHEMIC WINDOW / LOGISTICS MANDATE:</text>
+  <text x="60" y="605" font-size="13" fill="#78350f">Max Cold Ischemia Time for Cardiac Allograft: STRICT 4.0 HOURS MAXIMUM.</text>
+  <text x="60" y="628" font-size="13" fill="#78350f">Target Recipient: Priority 1 Status on Regional Registry (KEM Hospital, Parel).</text>
+  <text x="60" y="650" font-size="13" font-weight="bold" fill="#b45309">TRAFFIC ALERT: Western Express Highway experiencing severe 45-min bottleneck. Police Green Corridor required.</text>
+
+  <!-- Handwritten Surgeon Notes -->
+  <text x="55" y="700" font-size="13" font-weight="bold">ATTENDING TRANSPLANT SURGEON NOTES (HANDWRITTEN):</text>
+  <g font-family="'Comic Sans MS', 'Brush Script MT', cursive" font-size="15" fill="#1e3a8a">
+    <text x="65" y="735" transform="rotate(-1 65 735)">"Heart is pristine. Cross-clamping scheduled at 14:30 sharp."</text>
+    <text x="65" y="765" transform="rotate(-0.5 65 765)">"Cold Custodiol HTK cardioplegia prepared on wet ice."</text>
+    <text x="65" y="795" transform="rotate(1 65 795)">"Requesting immediate Green Corridor escort from Mumbai Police Dispatch or Helipad transfer."</text>
+    <text x="65" y="825" transform="rotate(-0.8 65 825)">"Recipient ready in OR-4 at KEM Hospital."</text>
+  </g>
+
+  <!-- Signatures and Stamp -->
+  <line x1="50" y1="880" x2="300" y2="880" stroke="#333" />
+  <text x="50" y="900" font-size="12">Dr. R. K. Mehta, M.Ch (CTVS)</text>
+  <text x="50" y="915" font-size="11" fill="#666">Chief Transplant Procurement Surgeon</text>
+
+  <g transform="rotate(8 580 900)">
+    <circle cx="580" cy="900" r="55" fill="none" stroke="#047857" stroke-width="3" stroke-dasharray="6,2" />
+    <text x="580" y="890" font-size="11" font-weight="bold" fill="#047857" text-anchor="middle">NOTTO VERIFIED</text>
+    <text x="580" y="910" font-size="13" font-weight="900" fill="#047857" text-anchor="middle">APPROVED</text>
+    <text x="580" y="925" font-size="9" fill="#047857" text-anchor="middle">WEST ZONE DISPATCH</text>
+  </g>
+
+  <!-- Scan artifacts / noise simulation lines -->
+  <line x1="20" y1="420" x2="780" y2="425" stroke="#ccc" stroke-width="0.75" />
+  <line x1="30" y1="710" x2="770" y2="708" stroke="#bbb" stroke-width="0.5" />
+</svg>
